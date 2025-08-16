@@ -1,4 +1,4 @@
-# Playwright Python + browsers preinstalled (version 1.54)
+# Playwright Python base with browsers (v1.54)
 FROM mcr.microsoft.com/playwright/python:v1.54.0-jammy
 
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1 \
@@ -8,17 +8,20 @@ ENV PIP_DISABLE_PIP_VERSION_CHECK=1 \
 
 WORKDIR /app
 
-# Install only your app deps (NOT playwright)
+# Install your Python deps (now includes playwright==1.54.0)
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Smoke check: fail build if Playwright isn't present (it should be)
+# Optional smoke check (now should succeed)
 RUN python - <<'PY'
-import playwright, sys
+import sys, playwright
 print("python:", sys.version)
 print("playwright:", playwright.__version__)
 PY
 
+# App files
 COPY . .
 EXPOSE 8000
+
+# One worker reusing one Chromium instance
 CMD ["bash", "-lc", "./start.sh"]

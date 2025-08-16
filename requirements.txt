@@ -2,3 +2,4 @@ fastapi
 uvicorn[standard]
 orjson
 rich
+playwright==1.54.0
