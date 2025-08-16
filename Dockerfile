@@ -1,4 +1,4 @@
-# Match Playwright runtime & browsers (1.54)
+# Match Playwright runtime & browsers (v1.54)
 FROM mcr.microsoft.com/playwright/python:v1.54.0-jammy
 
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1 \
