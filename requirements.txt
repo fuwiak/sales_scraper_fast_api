@@ -4,3 +4,4 @@ browser-use>=0.1.21
 playwright>=1.45
 python-dotenv>=1.0
 pydantic>=2.7
+orjson
