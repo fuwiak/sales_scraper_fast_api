@@ -14,7 +14,39 @@ A comprehensive web scraper for MVB Tax Sales auction data with both CLI and Fas
 - 🔍 **Deduplication** to prevent duplicate entries
 - ⚙️ **Configurable parameters** for flexible scraping
 
-## Installation
+## How to run (fast)
+
+### CLI
+```bash
+pip install playwright rich
+python -m playwright install
+
+# First 3 "pages", live colored logs → stderr, TSV → stdout
+python cli.py --page 3 > items_ids.tsv
+
+# Pages 3..5, save normalized CSV file too
+python cli.py --start 3 --end 5 --out-csv items_normalized.csv
+```
+
+### API (for n8n)
+```bash
+pip install fastapi uvicorn[standard] orjson playwright
+python -m playwright install
+
+# single worker is usually enough; reuse Chromium in-process
+uvicorn api:app --host 0.0.0.0 --port 8000 --workers 1
+```
+
+### curl tests
+```bash
+# Only first page
+curl -s "http://localhost:8000/scrape?page=1" | jq
+
+# Pages 1..3
+curl -s "http://localhost:8000/scrape?start=1&end=3" | jq
+```
+
+## Installation (alternative)
 
 1. **Create and activate virtual environment:**
 ```bash
@@ -30,28 +62,28 @@ playwright install
 
 ## CLI Usage
 
-The main CLI tool is `allitems_cli.py` which provides comprehensive scraping capabilities.
+The main CLI tool is `cli.py` which provides comprehensive scraping capabilities.
 
 ### Basic Commands
 
 ```bash
 # Scrape first page (default)
-python allitems_cli.py
+python cli.py
 
 # Scrape first 5 pages
-python allitems_cli.py --page 5
+python cli.py --page 5
 
 # Scrape pages 10-20
-python allitems_cli.py --start 10 --end 20
+python cli.py --start 10 --end 20
 
 # Run with visible browser (for debugging)
-python allitems_cli.py --no-headless --page 1
+python cli.py --no-headless --page 1
 
 # Save outputs to specific files
-python allitems_cli.py --out-tsv data.tsv --out-csv data.csv --page 3
+python cli.py --out-tsv data.tsv --out-csv data.csv --page 3
 
 # Silent mode (no progress output)
-python allitems_cli.py --no-progress --page 2
+python cli.py --no-progress --page 2
 ```
 
 ### CLI Options
@@ -202,7 +234,7 @@ kill -9 $(lsof -ti:8000)
 
 Enable verbose output and visible browser:
 ```bash
-python allitems_cli.py --no-headless --page 1 --colors
+python cli.py --no-headless --page 1 --colors
 ```
 
 For API debugging, check FastAPI logs and use the interactive docs at `/docs`.
@@ -210,11 +242,11 @@ For API debugging, check FastAPI logs and use the interactive docs at `/docs`.
 ## Project Structure
 
 ```
-├── allitems_cli.py     # Main CLI scraper tool
-├── api.py              # FastAPI web service
+├── cli.py              # Main CLI scraper tool
+├── api.py              # FastAPI web service  
+├── scraper_engine.py   # Shared async Playwright engine
+├── allitems_cli.py     # Legacy CLI tool (kept for compatibility)
 ├── requirements.txt    # Python dependencies
-├── items_3_5.tsv      # Sample IDS-style output
-├── items_normalized.csv # Sample normalized output
 ├── logs/              # Execution logs (gitignored)
 ├── output/            # Scraped data (gitignored)
 └── README.md          # This file
