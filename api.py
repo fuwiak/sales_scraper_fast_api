@@ -55,3 +55,17 @@ async def scrape(
     # - data["ids"]      → original IDS-compatible objects
     # - data["normalized"] → human-friendly objects with stable keys
     return data
+
+@app.get("/debug/versions")
+async def versions():
+    import sys, platform
+    try:
+        import playwright
+        pw = playwright.__version__
+    except Exception:
+        pw = None
+    return {
+        "python": sys.version,
+        "platform": platform.platform(),
+        "playwright": pw,
+    }
