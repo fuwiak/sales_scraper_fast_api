@@ -8,20 +8,21 @@ ENV PIP_DISABLE_PIP_VERSION_CHECK=1 \
 
 WORKDIR /app
 
-# Install your Python deps (now includes playwright==1.54.0)
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Optional smoke check (now should succeed)
+# ✅ Robust smoke check (no reliance on __version__)
 RUN python - <<'PY'
-import sys, playwright
+import sys, platform
+from importlib.metadata import version, PackageNotFoundError
 print("python:", sys.version)
-print("playwright:", playwright.__version__)
+try:
+    print("playwright:", version("playwright"))
+except PackageNotFoundError:
+    print("playwright: MISSING")
+    raise SystemExit(1)
 PY
 
-# App files
 COPY . .
 EXPOSE 8000
-
-# One worker reusing one Chromium instance
 CMD ["bash", "-lc", "./start.sh"]
