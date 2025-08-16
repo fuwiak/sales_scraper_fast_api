@@ -138,8 +138,8 @@ output/
 
 # Data files (if they contain sensitive or large data)
 # Uncomment if needed:
-# *.csv
-# *.tsv
+*.csv
+*.tsv
 # *.json
 # *.jsonl
 
